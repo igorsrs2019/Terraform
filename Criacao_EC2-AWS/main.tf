@@ -54,7 +54,7 @@ module "ec2_instance" {
   associate_public_ip_address = true
 
   tags = {
-    Name  = "Minha primeira maquina"
+    Name  = "Minha primeira Maquina"
     
   }
 }
