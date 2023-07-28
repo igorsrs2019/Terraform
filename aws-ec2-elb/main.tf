@@ -16,8 +16,8 @@ provider "aws" {
   shared_config_files      = ["~/.aws/config"]
   shared_credentials_files = ["~/.aws/credentials"]
   region  = var.region
+  
 }
-
 
  # Create Security Group  allow ssh/htp 
 
@@ -64,47 +64,20 @@ resource "aws_security_group" "allow_ssh_http" {
   }
 
 
-  # Create Security Group Load Balance
-  resource "aws_security_group" "allow_http" {
-  name        =  var.name_security_group_elb
-  description = "Allow http"
-  vpc_id      =  var.vpc_id_security_group
-
-  ingress {
-    description      = "HTTP"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    
-  }
-
-  tags = {
-    Name = "security-group-balance"
-    
-  }
+}
 
   # Create Loadbalance
 
-  resource "aws_lb" "elb"{
-   Name        = "teste-lb"
+  resource "aws_elb" "default"  {
+   name        = "teste-lb"
    internal    = "false"
-   load_balancer_type = "application"
-   security_groups = [aws_security_group.lb_sg.id]
-   subnets         = [aws_subnet.public.subnet_id_aws_elb.id]
-
+   
+   # instances registred on elb
    instances = ["${aws_instance.webserver001.id}", "${aws_instance.webserver002.id}"]
    availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
-   enable_deletion_protection =  true
+   
 
-   #Listener ports ELB
+   #Listener ports elb
     
   listener{
    instance_port = 80
@@ -114,12 +87,8 @@ resource "aws_security_group" "allow_ssh_http" {
 
   }
    
-   tags = {
 
-    Environment = "LoadBalance"
-  }
-
-   # Health check instances in balancer  
+   # Health check instances on balancer  
    
  health_check {
   target = "HTTP:80/"
@@ -128,23 +97,14 @@ resource "aws_security_group" "allow_ssh_http" {
   interval = 30
   timeout = 5
   
- tags = {
-   name = "elb"
+
 
  }
-
- }
-
-
-
 
   }
-
-
-}
-  # Create primary EC2
-
   
+
+  # Create primary EC2
 
   resource "aws_instance" "webserver001" {
   ami           = var.ami_aws_instance
@@ -153,7 +113,7 @@ resource "aws_security_group" "allow_ssh_http" {
   monitoring             = false
   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id]
   subnet_id              = var.subnet_id_aws_webserver001
-  associate_public_ip_address = true
+  associate_public_ip_address = false
 
   tags = {
     Name  = "Webserver001"
@@ -162,7 +122,7 @@ resource "aws_security_group" "allow_ssh_http" {
 
 
   }
-}
+
 
     # Create secondary EC2
   resource "aws_instance" "webserver002" {
@@ -172,7 +132,7 @@ resource "aws_security_group" "allow_ssh_http" {
   monitoring             = false
   vpc_security_group_ids = [aws_security_group.allow_ssh_http.id]
   subnet_id              = var.subnet_id_aws_webserver002
-  associate_public_ip_address = true
+  associate_public_ip_address = false
 
   tags = {
     Name  = "Webserver002"

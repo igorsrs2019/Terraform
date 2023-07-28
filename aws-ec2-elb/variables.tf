@@ -6,12 +6,9 @@ variable "name_security_group" {
   default= "allow_ssh_http" 
 }
 
-variable "name_security_group_elb" {
-  default= "allow_http" 
-}
 
 variable "vpc_id_security_group" {
-  default= "vpc-02ca2e9c5b2f8f744" 
+  default= "vpc-0ab691ed4685b2ddc" 
 }
 
 variable "ami_aws_instance" {
@@ -24,18 +21,12 @@ variable "type_aws_instance" {
 }
 
 variable "subnet_id_aws_webserver001" {
-  default= "subnet-0e5e042cfbd42b3dc" 
+  default= "subnet-0f4d38f21e3d47b60" 
 }
 
 variable "subnet_id_aws_webserver002" {
-  default= "subnet-0252700f2d42780e3" 
+  default= "subnet-0e5698b318e1ae41a" 
 }
-
-variable "subnet_id_aws_elb" {
-  default= "subnet-0a8f18c3bf03781f7" 
-}
-
-
 
 variable "key_aws_instance" {
   default= "LINUX" 
