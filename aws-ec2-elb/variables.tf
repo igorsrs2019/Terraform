@@ -7,7 +7,7 @@ variable "name_security_group" {
 }
 
 
-variable "vpc_id_security_group" {
+variable "vpc_id" {
   default= "vpc-0ab691ed4685b2ddc" 
 }
 

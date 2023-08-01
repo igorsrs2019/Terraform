@@ -10,7 +10,7 @@ terraform {
 }
 
 
-  #Path credentials provider
+  # Path credentials provider
 
 provider "aws" {
   shared_config_files      = ["~/.aws/config"]
@@ -19,12 +19,12 @@ provider "aws" {
   
 }
 
- # Create Security Group  allow ssh/htp 
+ # Creating the Security Group by releasing HTTP and SSH
 
 resource "aws_security_group" "allow_ssh_http" {
   name        =  var.name_security_group
   description = "Allow ssh and http inbound traffic"
-  vpc_id      =  var.vpc_id_security_group
+  vpc_id      =  var.vpc_id
 
   ingress {
     description      = "SSH"
@@ -44,7 +44,7 @@ resource "aws_security_group" "allow_ssh_http" {
 
   tags = {
     Name = "allow_SSH"
-    Name = "Allow HTTP"
+    Name = "allow_HTTP"
   }
 
   ingress {
@@ -66,13 +66,13 @@ resource "aws_security_group" "allow_ssh_http" {
 
 }
 
-  # Create Loadbalance
+  # Creating the Loadbalance
 
   resource "aws_elb" "default"  {
    name        = "teste-lb"
    internal    = "false"
    
-   # instances registred on elb
+   # Registering the instances created in the ELB
    instances = ["${aws_instance.webserver001.id}", "${aws_instance.webserver002.id}"]
    availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
    
@@ -88,7 +88,7 @@ resource "aws_security_group" "allow_ssh_http" {
   }
    
 
-   # Health check instances on balancer  
+   # Health check instances on balancer
    
  health_check {
   target = "HTTP:80/"
@@ -104,7 +104,7 @@ resource "aws_security_group" "allow_ssh_http" {
   }
   
 
-  # Create primary EC2
+  # Creating the first EC2
 
   resource "aws_instance" "webserver001" {
   ami           = var.ami_aws_instance
@@ -123,8 +123,8 @@ resource "aws_security_group" "allow_ssh_http" {
 
   }
 
-
-    # Create secondary EC2
+  # Creating the second EC2
+ 
   resource "aws_instance" "webserver002" {
   ami           = var.ami_aws_instance
   instance_type          = var.type_aws_instance
